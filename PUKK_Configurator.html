@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUKK Configuration Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FBFBFB;
+      --surface: #E6E7E8;
+      --border: #2a2f38;
+      --accent: #284CAF;
+      --accent-dim: rgba(0,80,210,0.2);
+      --text: #000000;
+      --muted: #606880;
+      --error: #ff200A;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Source Sans 3', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container { width: 100%; max-width: 560px; }
+
+    header { margin-bottom: 2.5rem; }
+
+    header h1 {
+      font-family: 'Source Sans 3';
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    header p { color: var(--muted); font-size: 0.85rem; }
+
+    .form-group { margin-bottom: 1.25rem; }
+
+    label {
+      display: block;
+      font-family: 'Source Sans 3';
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.45rem;
+    }
+
+    label .hint {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Source Sans 3';
+      font-size: 0.9rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus { border-color: var(--accent); }
+    input.invalid { border-color: var(--error) !important; }
+
+    .error-msg {
+      font-family: 'Source Sans 3';
+      font-size: 0.72rem;
+      color: var(--error);
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    .toggle-group { display: flex; gap: 0.5rem; }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 0.6rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: 'Source Sans 3';
+      font-size: 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toggle-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    .section-label {
+      font-family: 'Source Sans 3';
+      font-size: 1rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.25rem;
+    }
+
+    .generate-btn {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #FBFBFB;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Source Sans 3';
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .generate-btn:hover { opacity: 0.85; }
+
+    .output-section { margin-top: 2rem; display: none; }
+    .output-section.visible { display: block; }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .output-header span {
+      font-family: 'Source Sans 3';
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .copy-btn, .download-btn, .nfc-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Source Sans 3';
+      font-size: 0.72rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover, .download-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .actions { display: flex; gap: 0.5rem; }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem;
+      font-family: 'Source Sans 3';
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text);
+      overflow-x: auto;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>PUKK Configurator</h1>
+      <p>Generate a configuration file</p>
+    </header>
+
+    <div class="section-label">WiFi</div>
+
+    <div class="form-group">
+      <label>SSID</label>
+      <input type="text" id="wifi_ssid" placeholder="Network name">
+      <div class="error-msg" id="err_ssid">SSID is required</div>
+    </div>
+
+    <div class="form-group">
+      <label>Password <span class="hint">— leave empty for open network</span></label>
+      <input type="password" id="wifi_pass" placeholder="Leave empty for open network">
+    </div>
+
+    <div class="form-group">
+      <label>Hidden Network</label>
+      <div class="toggle-group">
+        <button class="toggle-btn" data-field="wifi_hidden" data-value="true">true</button>
+        <button class="toggle-btn active" data-field="wifi_hidden" data-value="false">false</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">CMS</div>
+
+    <div class="form-group">
+      <label>Server Address <span class="hint">— URL or IP address</span></label>
+      <input type="text" id="cms_server_address" placeholder="http://192.168.1.x or http://example.com">
+      <div class="error-msg" id="err_cms"></div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">OTA</div>
+
+    <div class="form-group">
+      <label>Enable automatic OTA Updates </label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-field="do_ota" data-value="true">Enable</button>
+        <button class="toggle-btn" data-field="do_ota" data-value="false">Disable</button>
+      </div>
+    </div>
+
+    <!-- <div class="form-group">
+      <label>OTA Address</label>
+      <input type="text" id="ota_address" placeholder="http://update-server/firmware">
+      <div class="error-msg" id="err_ota"></div>
+    </div> -->
+
+    <button class="generate-btn" onclick="generate()">Generate config.json</button>
+
+    <div class="output-section" id="output">
+      <div class="output-header">
+        <span>output</span>
+        <div class="actions">
+		  <button class="nfc-btn" onclick="writeToNfc()">Write to NFC</button>
+          <button class="copy-btn" onclick="copyJSON()">Copy</button>
+          <button class="download-btn" onclick="downloadJSON()">Download</button>
+        </div>
+      </div>
+      <pre id="preview"></pre>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      wifi_hidden: false,
+      do_ota: true
+    };
+
+	let current_config = null;
+
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const field = btn.dataset.field;
+        const value = btn.dataset.value === 'true';
+        state[field] = value;
+        document.querySelectorAll(`[data-field="${field}"]`).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Clear errors on input
+    document.getElementById('wifi_ssid').addEventListener('input', () => clearError('wifi_ssid', 'err_ssid'));
+    document.getElementById('cms_server_address').addEventListener('input', () => clearError('cms_server_address', 'err_cms'));
+    //    document.getElementById('ota_address').addEventListener('input', () => clearError('ota_address', 'err_ota'));
+
+    function setError(inputId, errId, msg) {
+      document.getElementById(inputId).classList.add('invalid');
+      const el = document.getElementById(errId);
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+    function clearError(inputId, errId) {
+      document.getElementById(inputId).classList.remove('invalid');
+      document.getElementById(errId).classList.remove('visible');
+    }
+
+    function isValidURL(val) {
+      try {
+        const u = new URL(val);
+        return u.protocol === 'http:' || u.protocol === 'https:';
+      } catch { return false; }
+    }
+
+    function isValidIP(val) {
+      // IPv4 with optional port, e.g. 192.168.1.1 or 192.168.1.1:8080
+      const match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})(:\d+)?$/.exec(val);
+      if (!match) return false;
+      return [match[1], match[2], match[3], match[4]].every(n => parseInt(n) <= 255);
+    }
+
+    function validate() {
+      let valid = true;
+
+      // SSID: required
+      const ssid = document.getElementById('wifi_ssid').value.trim();
+      if (!ssid) {
+        setError('wifi_ssid', 'err_ssid', 'SSID is required');
+        valid = false;
+      }
+
+      // Password: no restrictions (open network allowed)
+
+      // CMS server address: if non-empty, must be a valid URL or IP
+      const cms = document.getElementById('cms_server_address').value.trim();
+      if (cms && !isValidURL(cms) && !isValidIP(cms)) {
+        setError('cms_server_address', 'err_cms', 'Must be a valid URL (http://...) or IPv4 address');
+        valid = false;
+      }
+
+      // OTA address: if non-empty, must be a valid URL or IP
+      // const ota = document.getElementById('ota_address').value.trim();
+      // if (ota && !isValidURL(ota) && !isValidIP(ota)) {
+      //   setError('ota_address', 'err_ota', 'Must be a valid URL (http://...) or IPv4 address');
+      //   valid = false;
+      // }
+
+      return valid;
+    }
+
+    function buildConfig() {
+      return {
+        wifi_ssid: document.getElementById('wifi_ssid').value,
+        wifi_pass: document.getElementById('wifi_pass').value,
+        wifi_hidden: state.wifi_hidden,
+        cms_server_address: document.getElementById('cms_server_address').value,
+        do_ota: state.do_ota,
+        //ota_address: document.getElementById('ota_address').value
+      };
+    }
+
+    function generate() {
+      if (!validate()) return;
+      const config = buildConfig();
+      current_config = config;
+      document.getElementById('preview').textContent = JSON.stringify(config, null, 2);
+      const out = document.getElementById('output');
+      out.classList.add('visible');
+      out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function copyJSON() {
+      navigator.clipboard.writeText(document.getElementById('preview').textContent);
+    }
+
+    function downloadJSON() {
+      const blob = new Blob([document.getElementById('preview').textContent], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'config.json';
+      a.click();
+    }
+
+	function writeToNfc() {
+		NfcBridge.writeToNfc(JSON.stringify(current_config));
+	}
+  </script>
+</body>
+</html>
