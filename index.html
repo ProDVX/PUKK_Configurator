@@ -156,6 +156,57 @@
       margin-bottom: 0.5rem;
     }
 
+    .help-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--muted);
+      color: var(--muted);
+      font-size: 0.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 0.3rem;
+      position: relative;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .help-icon:hover { border-color: var(--accent); color: var(--accent); }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--border);
+      color: #FBFBFB;
+      font-size: 0.72rem;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      padding: 0.45rem 0.65rem;
+      border-radius: 5px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--border);
+    }
+
+    .help-icon.open .tooltip { display: block; }
+
     .output-header span {
       font-family: 'Source Sans 3';
       font-size: 0.7rem;
@@ -229,7 +280,7 @@
     <div class="section-label">CMS</div>
 
     <div class="form-group">
-      <label>Server Address <span class="hint">— URL or IP address</span></label>
+      <label>Server Address <span class="hint">— URL or IP address</span><span class="help-icon" onclick="toggleTip(this)">?<span class="tooltip">The address of your CMS server, where the PUKK devices will send their requests</span></span></label>
       <input type="text" id="cms_server_address" placeholder="http://192.168.1.x or http://example.com">
       <div class="error-msg" id="err_cms"></div>
     </div>
@@ -238,7 +289,7 @@
     <div class="section-label">OTA</div>
 
     <div class="form-group">
-      <label>Enable automatic OTA Updates </label>
+      <label>Enable automatic OTA Updates<span class="help-icon" onclick="toggleTip(this)">?<span class="tooltip">When enabled, the device will automatically download and install firmware updates.<br><br> The update can be started manually using the REST API.</span></span></label>
       <div class="toggle-group">
         <button class="toggle-btn active" data-field="do_ota" data-value="true">Enable</button>
         <button class="toggle-btn" data-field="do_ota" data-value="false">Disable</button>
@@ -257,7 +308,7 @@
       <div class="output-header">
         <span>output</span>
         <div class="actions">
-		  <button class="nfc-btn" onclick="writeToNfc()">Write to NFC</button>
+		  <!-- <button class="nfc-btn" onclick="writeToNfc()">Write to NFC</button> -->
           <button class="copy-btn" onclick="copyJSON()">Copy</button>
           <button class="download-btn" onclick="downloadJSON()">Download</button>
         </div>
@@ -376,6 +427,18 @@
       a.download = 'config.json';
       a.click();
     }
+
+    function toggleTip(el) {
+      const isOpen = el.classList.contains('open');
+      document.querySelectorAll('.help-icon.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) el.classList.add('open');
+    }
+
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.help-icon')) {
+        document.querySelectorAll('.help-icon.open').forEach(i => i.classList.remove('open'));
+      }
+    });
 
 	function writeToNfc() {
 		NfcBridge.writeToNfc(JSON.stringify(current_config));
