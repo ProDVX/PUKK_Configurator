@@ -66,6 +66,7 @@
       letter-spacing: 0;
     }
 
+	input[type="number"],
     input[type="text"],
     input[type="password"] {
       width: 100%;
@@ -302,6 +303,15 @@
       <div class="error-msg" id="err_ota"></div>
     </div> -->
 
+	<hr class="divider">
+	<div class="section-label">Polling</div>
+
+    <div class="form-group">
+      <label>Interval in ms</label>
+      <input type="number" id="polling_interval" placeholder="5000" value="5000">
+      <div class="error-msg" id="err_poll">Interval is required</div>
+    </div>
+
     <button class="generate-btn" onclick="generate()">Generate config.json</button>
 
     <div class="output-section" id="output">
@@ -337,6 +347,7 @@
 
     // Clear errors on input
     document.getElementById('wifi_ssid').addEventListener('input', () => clearError('wifi_ssid', 'err_ssid'));
+	document.getElementById('polling_interval').addEventListener('input', () => clearError('polling_interval', 'err_poll'));
     document.getElementById('cms_server_address').addEventListener('input', () => clearError('cms_server_address', 'err_cms'));
     //    document.getElementById('ota_address').addEventListener('input', () => clearError('ota_address', 'err_ota'));
 
@@ -402,6 +413,7 @@
         wifi_hidden: state.wifi_hidden,
         cms_server_address: document.getElementById('cms_server_address').value,
         do_ota: state.do_ota,
+		poll_interval_ms: parseInt(document.getElementById('polling_interval').value || 5000, 10)
         //ota_address: document.getElementById('ota_address').value
       };
     }
